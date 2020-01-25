@@ -11,6 +11,8 @@
 
     <feature name="azure-iot-sdk" version="${project.version}">
         <bundle dependency="true">mvn:com.google.guava/guava/${guava.version}</bundle>
+
+        <bundle>wrap:mvn:com.microsoft.azure.sdk.iot/iot-service-client/1.19.0</bundle>
     </feature>
 
 </features>

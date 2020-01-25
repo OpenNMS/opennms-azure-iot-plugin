@@ -28,47 +28,30 @@
 
 package org.opennms.plugins.azure.iot;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.Consumer;
 
-import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.sdk.iot.service.devicetwin.DeviceTwin;
 import com.microsoft.azure.sdk.iot.service.devicetwin.DeviceTwinDevice;
 import com.microsoft.azure.sdk.iot.service.devicetwin.Query;
 import com.microsoft.azure.sdk.iot.service.exceptions.IotHubException;
-import com.microsoft.rest.LogLevel;
 
-/**
- * Must support multiple IOT hubs
- */
-public class MyPlugin {
+public class AZIOTClient {
 
-    // Can we enumerate the IOT hubs, and identify which regions they are in?
-    public void getIotHubData() throws IOException {
-        Azure azure = Azure.configure()
-                .withLogLevel(LogLevel.BASIC)
-                .authenticate((File)null)
-                .withDefaultSubscription();
-        // There's no Azure IOT Hub Mgmt. SDK, so we'd need to use REST
+    private final String connectionString;
 
-        // See https://stackoverflow.com/questions/49142765/is-there-a-java-sdk-for-iot-hub-resource
-        // See https://feedback.azure.com/forums/321918-azure-iot/suggestions/33564925-azure-iot-hub-management-sdk-for-java
+    public AZIOTClient(String connectionString) {
+        this.connectionString = Objects.requireNonNull(connectionString);
     }
 
-    public static void main(String[] args) throws IOException, IotHubException {
-        DeviceTwin twinClient = DeviceTwin.createFromConnectionString("HostName=rnd-maas.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=VnQmg/+UGiAObDRH9pyQDFsYh0zatUhLjpcic2ChS1s=");
+    public void forEachDevice(Consumer<DeviceTwinDevice> consumer) throws IOException, IotHubException {
+        DeviceTwin twinClient = DeviceTwin.createFromConnectionString(connectionString);
         // See https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-query-language for query ref.
         Query twinQuery = twinClient.queryTwin("SELECT * FROM devices", 10);
         while (twinClient.hasNextDeviceTwin(twinQuery)) {
             DeviceTwinDevice d = twinClient.getNextDeviceTwin(twinQuery);
-            System.out.printf("Device with id: %s has connections state: %s\n", d.getDeviceId(), d.getConnectionState());
-            // d.getConnectionState(); // connection state
-            // d.getDeviceId(); // unique id
-
-            // Desired property revisions metric
-            // d.getDesiredProperties() // metric
+            consumer.accept(d);
         }
-
-        // For polling, periodically issue queries to find devices with state changes since the last known poll
     }
 }
