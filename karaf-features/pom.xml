@@ -82,7 +82,7 @@
                                 <feature>framework</feature>
                             </framework>
                             <features>
-                                <feature>azure-iot-sdk</feature>
+                                <feature>azure-sdk</feature>
                             </features>
                         </configuration>
                     </execution>

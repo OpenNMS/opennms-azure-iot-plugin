@@ -43,6 +43,13 @@ import com.microsoft.rest.LogLevel;
  */
 public class MyPlugin {
 
+    public void syncState() {
+        // Enumerate all of the nodes
+        // Enumerate all of the alarms
+        // Search for state changes - max, min
+        // Is the device connected, or not
+    }
+
     // Can we enumerate the IOT hubs, and identify which regions they are in?
     public void getIotHubData() throws IOException {
         Azure azure = Azure.configure()
@@ -50,7 +57,6 @@ public class MyPlugin {
                 .authenticate((File)null)
                 .withDefaultSubscription();
         // There's no Azure IOT Hub Mgmt. SDK, so we'd need to use REST
-
         // See https://stackoverflow.com/questions/49142765/is-there-a-java-sdk-for-iot-hub-resource
         // See https://feedback.azure.com/forums/321918-azure-iot/suggestions/33564925-azure-iot-hub-management-sdk-for-java
     }

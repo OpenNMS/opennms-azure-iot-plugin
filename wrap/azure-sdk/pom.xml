@@ -1,0 +1,78 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.opennms.plugins.azure</groupId>
+        <artifactId>iot-wrap</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.opennms.plugins.azure.wrap</groupId>
+    <artifactId>azure-sdk</artifactId>
+    <name>OpenNMS :: Plugins :: Azure :: IOT :: Wrap :: Azure SDK</name>
+    <packaging>bundle</packaging>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- <exclude>com.google.guava:guava</exclude> -->
+                                </excludes>
+                            </artifactSet>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>*,javax.net.ssl,javax.crypto,javax.crypto.spec</Import-Package>
+                        <Export-Package>
+                        com.microsoft.rest;version="${project.version}",
+                        com.microsoft.azure.management;version="${project.version}",
+                        com.microsoft.azure.management.resources.fluentcore.arm;version="${project.version}",
+                        com.microsoft.azure.sdk.iot.service.devicetwin;version="${project.version}",
+                        com.microsoft.azure.sdk.iot.service.exceptions;version="${project.version}",
+                        com.microsoft.azure.sdk.iot.deps.twin;version="${project.version}",
+                        com.microsoft.azure.sdk.iot.service;version="${project.version}",
+                        com.microsoft.azure.sdk.iot.service.transport.http;version="${project.version}"
+                        </Export-Package>
+                    </instructions>
+                    <unpackBundle>true</unpackBundle>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure</artifactId>
+            <version>1.30.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-mgmt-resources</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure.sdk.iot</groupId>
+            <artifactId>iot-service-client</artifactId>
+            <version>1.19.0</version>
+        </dependency>
+    </dependencies>
+
+</project>

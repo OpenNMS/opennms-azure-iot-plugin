@@ -1,0 +1,12 @@
+<events xmlns="http://xmlns.opennms.org/xsd/eventconf">
+    <event>
+        <uei>uei.opennms.org/azure/iot/deviceConnectionState</uei>
+        <event-label>AZ IOT: Device Connection State</event-label>
+        <descr>The IOT Device with device id %foreignid% has a connection state: %parm[connectionState]% in the Azure IOT Hub.</descr>
+        <logmsg dest="logndisplay">Device has state: %parm[connectionState]%</logmsg>
+        <severity>Normal</severity>
+        <alarm-data reduction-key="%uei%:%dpname%:%nodeid%" alarm-type="3">
+            <update-field field-name="severity" update-on-reduction="true"/>
+        </alarm-data>
+    </event>
+</events>

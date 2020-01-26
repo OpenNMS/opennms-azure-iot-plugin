@@ -5,14 +5,13 @@
         <feature dependency="true">aries-blueprint</feature>
         <feature dependency="true">shell</feature>
         <feature version="${opennms.api.version}" dependency="true">opennms-integration-api</feature>
+        <feature version="${project.version}">azure-sdk</feature>
         <bundle dependency="true">mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opennms.plugins.azure/iot-plugin/${project.version}</bundle>
     </feature>
 
-    <feature name="azure-iot-sdk" version="${project.version}">
-        <bundle dependency="true">mvn:com.google.guava/guava/${guava.version}</bundle>
-
-        <bundle>wrap:mvn:com.microsoft.azure.sdk.iot/iot-service-client/1.19.0</bundle>
+    <feature name="azure-sdk" version="${project.version}">
+        <bundle>mvn:org.opennms.plugins.azure.wrap/azure-sdk/${project.version}</bundle>
     </feature>
 
 </features>

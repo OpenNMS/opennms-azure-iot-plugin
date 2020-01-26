@@ -36,11 +36,14 @@ import java.util.Objects;
 import org.opennms.integration.api.v1.config.requisition.Requisition;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisition;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionInterface;
+import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionMetaData;
 import org.opennms.integration.api.v1.config.requisition.immutables.ImmutableRequisitionNode;
 import org.opennms.integration.api.v1.requisition.RequisitionProvider;
 import org.opennms.integration.api.v1.requisition.RequisitionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.microsoft.azure.sdk.iot.service.devicetwin.DeviceTwinDevice;
 
 public class AZIOTRequisitionProvider implements RequisitionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AZIOTRequisitionProvider.class);
@@ -74,25 +77,33 @@ public class AZIOTRequisitionProvider implements RequisitionProvider {
         return new AZIOTRequisitionRequest();
     }
 
+    public static String toFID(DeviceTwinDevice d) {
+        // Colons are typically used a separators, so we replace them to be safe
+        return d.getDeviceId().replaceAll(":", "_");
+    }
+
     @Override
     public Requisition getRequisition(RequisitionRequest requisitionRequest) {
         final ImmutableRequisition.Builder requisitionBuilder = ImmutableRequisition.newBuilder()
                 .setForeignSource(DEFAULT_FOREIGN_SOURCE);
         try {
             azIotClient.forEachDevice(d -> {
-                // Colons are typically used a separators, so we replace them to be safe
-                final String foreignId = d.getDeviceId().replaceAll(":", "_");
-
                 final ImmutableRequisitionNode.Builder nodeBuilder = ImmutableRequisitionNode.newBuilder()
-                        .setForeignId(foreignId)
+                        .setForeignId(toFID(d))
                         .setNodeLabel(d.getDeviceId())
                         .addInterface(ImmutableRequisitionInterface.newBuilder()
                                 .setIpAddress(NON_RESPONSIVE_IP_ADDRESS)
                                 .addMonitoredService("AzureIOTDevice")
                                 .build())
+                        .addCategory("IOT")
                         // TODO: Derive these from fields in the twin
                         .addAsset("latitude", "45.340561")
-                        .addAsset("longitude", "-75.910005");
+                        .addAsset("longitude", "-75.910005")
+                        .addMetaData(ImmutableRequisitionMetaData.newBuilder()
+                                .setContext(METADATA_CONTEXT_ID)
+                                .setKey("azUrl")
+                                .setValue("")
+                                .build());
                 requisitionBuilder.addNode(nodeBuilder.build());
             });
         } catch (Exception e) {
