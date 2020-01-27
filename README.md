@@ -2,6 +2,8 @@
 
 This plugin models devices registed in an Azure IOT Hub to nodes in OpenNMS.
 
+![](assets/images/azure-iot-plugin-overview.png "Azure IOT Plugin Architecture Overview")
+
 We currently support:
 * Building a requisition from all devices in an IOT Hub
 * Generating events when a device changes connection states (polled)
